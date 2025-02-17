@@ -36,7 +36,7 @@ public class UserServiceImplTest {
         regRequest.setGender("Male");
         regRequest.setPhoneNumber("07033099619");
         regRequest.setAlternativePhoneNumber("07033099619");
-        regRequest.setAccountBalance(BigDecimal.ZERO);
+//        regRequest.setAccountBalance(BigDecimal.ZERO);
 
         BankResponse response = userService.createAccount(regRequest);
 
