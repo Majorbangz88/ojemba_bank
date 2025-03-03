@@ -25,34 +25,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public BankResponse createAccount(UserRegRequest regRequest) {
 
-//        User newUser = new User();
-//        newUser.setFirstName(regRequest.getFirstName());
-//        newUser.setOtherName(regRequest.getOtherName());
-//        newUser.setLastName(regRequest.getLastName());
-//        newUser.setGender(regRequest.getGender());
-//        newUser.setAddress(regRequest.getAddress());
-//        newUser.setStateOfOrigin(regRequest.getStateOfOrigin());
-//        newUser.setAccountNumber(AccountUtil.generateAccountNumber());
-//        newUser.setAccountBalance(BigDecimal.ZERO);
-//        newUser.setEmail(regRequest.getEmail());
-//        newUser.setPhoneNumber(regRequest.getPhoneNumber());
-//        newUser.setAlternativePhoneNumber(regRequest.getAlternativePhoneNumber());
-//
-//        User savedUser = userRepository.save(newUser);
-//
-//        BankResponse response = new BankResponse();
-//        response.setResponseCode(AccountUtil.ACCOUNT_CREATION_CODE);
-//        response.setResponseMessage(AccountUtil.ACCOUNT_SUCCESS_MESSAGE);
-//
-//        AccountInfo accountInfo = new AccountInfo();
-//        accountInfo.setAccountName(savedUser.getFirstName() + " " + savedUser.getOtherName() + " " + savedUser.getLastName());
-//        accountInfo.setAccountNumber(savedUser.getAccountNumber());
-//        accountInfo.setAccountBalance(savedUser.getAccountBalance());
-//
-//        response.setAccountInfo(accountInfo);
-//
-//        return response;
-
         User newUser = User.builder()
                 .firstName(regRequest.getFirstName())
                 .otherName(regRequest.getOtherName())

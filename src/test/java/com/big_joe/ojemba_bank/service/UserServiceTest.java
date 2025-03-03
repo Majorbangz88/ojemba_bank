@@ -11,10 +11,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.math.BigDecimal;
-
 @SpringBootTest
-public class UserServiceImplTest {
+public class UserServiceTest {
 
     @Autowired
     private UserService userService;
@@ -43,4 +41,5 @@ public class UserServiceImplTest {
         assertEquals("Account created successfully", response.getResponseMessage());
         assertThat(userService.count(), is(1L));
     }
+
 }
