@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,6 +25,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BankResponse createAccount(UserRegRequest regRequest) {
+        Optional<User> foundUser = userRepository.findByEmail(regRequest.getEmail());
+
+        if (foundUser.isPresent()) {
+            return BankResponse.builder()
+                    .responseCode(AccountUtil.ACCOUNT_EXISTS_CODE)
+                    .responseMessage(AccountUtil.ACCOUNT_EXISTS_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
 
         User newUser = User.builder()
                 .firstName(regRequest.getFirstName())
