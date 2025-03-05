@@ -110,4 +110,12 @@ public class UserServiceImpl implements UserService {
                         .build())
                 .build();
     }
+
+    @Override
+    public String nameEnquiry(EnquiryRequest enquiryRequest) {
+        Optional<User> foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+
+        return foundUser.map(user -> user.getFirstName() + " " + user.getOtherName() + " " + user.getLastName()).orElse(AccountUtil.ACCOUNT_NOT_EXIST_MESSAGE);
+
+    }
 }

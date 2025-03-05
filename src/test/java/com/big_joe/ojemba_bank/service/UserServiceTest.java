@@ -105,6 +105,26 @@ public class UserServiceTest {
         assertEquals("Account Found!", response1.getResponseMessage());
     }
 
+    @Test
+    public void testForNameEnquiry() {
+        UserRegRequest regRequest = getUserRegRequest(
+                "Joel", "Chimaobi", "Chukwu",
+                "Enugu", "Lagos", "joel@gmail.com",
+                "Male", "07033099619", "07033099619"
+        );
 
+        BankResponse response = userService.createAccount(regRequest);
+
+        assertEquals("Account created successfully", response.getResponseMessage());
+        assertThat(userService.count(), is(1L));
+
+        EnquiryRequest enquiryRequest = EnquiryRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .build();
+
+        String customerName = userService.nameEnquiry(enquiryRequest);
+
+        assertEquals("Joel Chimaobi Chukwu", customerName);
+    }
 
 }
