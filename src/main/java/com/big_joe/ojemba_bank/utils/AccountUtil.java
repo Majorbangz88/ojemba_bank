@@ -12,6 +12,8 @@ public class AccountUtil {
     public static final String ACCOUNT_NOT_EXIST_MESSAGE = "This Account does not exist!";
     public static final String ACCOUNT_FOUND_CODE = "004";
     public static final String ACCOUNT_FOUND_MESSAGE = "Account Found!";
+    public static final String ACCOUNT_CREDIT_SUCCESS_CODE = "005";
+    public static final String ACCOUNT_CREDIT_SUCCESS_MESSAGE = "Your Account Has Been Successfully Credited";
 
     public static String generateAccountNumber() {
         int min = 100000;
