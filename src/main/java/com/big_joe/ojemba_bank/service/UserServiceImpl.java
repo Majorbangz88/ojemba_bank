@@ -5,6 +5,7 @@ import com.big_joe.ojemba_bank.data.model.User;
 import com.big_joe.ojemba_bank.data.repository.UserRepository;
 import com.big_joe.ojemba_bank.dto.BankResponse;
 import com.big_joe.ojemba_bank.dto.EmailDetails;
+import com.big_joe.ojemba_bank.dto.EnquiryRequest;
 import com.big_joe.ojemba_bank.dto.UserRegRequest;
 import com.big_joe.ojemba_bank.utils.AccountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long count() {
         return userRepository.count();
+    }
+
+    @Override
+    public BankResponse balanceEnquiry(EnquiryRequest enquiryRequest) {
+        Optional<User> foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+
+        if (foundUser.isEmpty()) {
+            return BankResponse.builder()
+                    .responseCode(AccountUtil.ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtil.ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        return BankResponse.builder()
+                .responseCode(AccountUtil.ACCOUNT_FOUND_CODE)
+                .responseMessage(AccountUtil.ACCOUNT_FOUND_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountBalance(foundUser.get().getAccountBalance())
+                        .accountNumber(foundUser.get().getAccountNumber())
+                        .accountName(foundUser.get().getFirstName() + " " + foundUser.get().getOtherName() + " " + foundUser.get().getLastName())
+                        .build())
+                .build();
     }
 }
