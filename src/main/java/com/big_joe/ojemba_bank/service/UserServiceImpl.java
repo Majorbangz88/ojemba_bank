@@ -4,6 +4,7 @@ import com.big_joe.ojemba_bank.data.model.AccountInfo;
 import com.big_joe.ojemba_bank.data.model.User;
 import com.big_joe.ojemba_bank.data.repository.UserRepository;
 import com.big_joe.ojemba_bank.dto.BankResponse;
+import com.big_joe.ojemba_bank.dto.EmailDetails;
 import com.big_joe.ojemba_bank.dto.UserRegRequest;
 import com.big_joe.ojemba_bank.utils.AccountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     public void deleteAll() {
@@ -50,6 +54,22 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         User savedUser = userRepository.save(newUser);
+
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(savedUser.getEmail())
+                .subject("Welcome To Ojemba Bank Plc.")
+                .messageBody("Hello " + savedUser.getFirstName() + " " + savedUser.getOtherName() + " " + savedUser.getLastName() + ",\n" +
+                        "We want to specially thank you for choosing Ojemba. Indeed, we stand true to our name as we promise you a jolly ride. \n" +
+                        "Kindly find your account details below: \n" +
+                        "Account Number: " + savedUser.getAccountNumber() + ",\n" +
+                        "Account Balance: NGN" + savedUser.getAccountBalance() + ".00\n" +
+                        "PLEASE FEEL FREE TO REACH OUT TO US FOR ANY ENQUIRIES THROUGH ANY OF OUR CHANNELS.\n" +
+                        "\n Kind regards,\n" +
+                        "Chukwu Joel Chimaobi\n" +
+                        "Head, Customer Success Dept!")
+                .build();
+
+        emailService.sendEmailAlert(emailDetails);
 
         return BankResponse.builder()
                 .responseCode(AccountUtil.ACCOUNT_CREATION_CODE)

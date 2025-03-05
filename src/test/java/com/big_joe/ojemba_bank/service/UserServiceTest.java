@@ -60,7 +60,7 @@ public class UserServiceTest {
     public void testForUniqueRegistration() {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
-                "Enugu", "Lagos", "joel@gmail.com",
+                "Enugu", "Lagos", "joellegend8@gmail.com",
                 "Male", "07033099619", "07033099619"
         );
 
@@ -71,7 +71,7 @@ public class UserServiceTest {
 
         UserRegRequest regRequest2 = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
-                "Enugu", "Lagos", "joel@gmail.com",
+                "Enugu", "Lagos", "joellegend8@gmail.com",
                 "Male", "07033099619", "07033099619"
         );
 
