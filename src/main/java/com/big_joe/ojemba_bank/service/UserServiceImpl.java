@@ -3,10 +3,7 @@ package com.big_joe.ojemba_bank.service;
 import com.big_joe.ojemba_bank.data.model.AccountInfo;
 import com.big_joe.ojemba_bank.data.model.User;
 import com.big_joe.ojemba_bank.data.repository.UserRepository;
-import com.big_joe.ojemba_bank.dto.BankResponse;
-import com.big_joe.ojemba_bank.dto.EmailDetails;
-import com.big_joe.ojemba_bank.dto.EnquiryRequest;
-import com.big_joe.ojemba_bank.dto.UserRegRequest;
+import com.big_joe.ojemba_bank.dto.*;
 import com.big_joe.ojemba_bank.utils.AccountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -117,5 +114,31 @@ public class UserServiceImpl implements UserService {
 
         return foundUser.map(user -> user.getFirstName() + " " + user.getOtherName() + " " + user.getLastName()).orElse(AccountUtil.ACCOUNT_NOT_EXIST_MESSAGE);
 
+    }
+
+    @Override
+    public BankResponse creditAccount(CreditDebitRequest request) {
+        Optional<User> foundUser = userRepository.findByAccountNumber(request.getAccountNumber());
+
+        if (foundUser.isEmpty()) {
+            return BankResponse.builder()
+                    .responseCode(AccountUtil.ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtil.ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        foundUser.get().setAccountBalance(foundUser.get().getAccountBalance().add(request.getAmount()));
+        userRepository.save(foundUser.get());
+
+        return BankResponse.builder()
+                .responseCode(AccountUtil.ACCOUNT_CREDIT_SUCCESS_CODE)
+                .responseMessage(AccountUtil.ACCOUNT_CREDIT_SUCCESS_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountName(foundUser.get().getFirstName() + " " + foundUser.get().getOtherName() + " " + foundUser.get().getLastName())
+                        .accountNumber(foundUser.get().getAccountNumber())
+                        .accountBalance(foundUser.get().getAccountBalance())
+                        .build())
+                .build();
     }
 }

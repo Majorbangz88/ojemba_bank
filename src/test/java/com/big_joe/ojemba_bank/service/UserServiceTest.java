@@ -1,6 +1,7 @@
 package com.big_joe.ojemba_bank.service;
 
 import com.big_joe.ojemba_bank.dto.BankResponse;
+import com.big_joe.ojemba_bank.dto.CreditDebitRequest;
 import com.big_joe.ojemba_bank.dto.EnquiryRequest;
 import com.big_joe.ojemba_bank.dto.UserRegRequest;
 import com.big_joe.ojemba_bank.exceptions.UniqueUserException;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.BigDecimal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -125,6 +128,30 @@ public class UserServiceTest {
         String customerName = userService.nameEnquiry(enquiryRequest);
 
         assertEquals("Joel Chimaobi Chukwu", customerName);
+    }
+
+    @Test
+    public void testForCreditTransaction() {
+        UserRegRequest regRequest = getUserRegRequest(
+                "Joel", "Chimaobi", "Chukwu",
+                "Enugu", "Lagos", "joel@gmail.com",
+                "Male", "07033099619", "07033099619"
+        );
+
+        BankResponse response = userService.createAccount(regRequest);
+
+        assertEquals("Account created successfully", response.getResponseMessage());
+        assertThat(userService.count(), is(1L));
+
+        CreditDebitRequest request = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(10000))
+                .build();
+
+        BankResponse response1 = userService.creditAccount(request);
+
+        assertNotNull(response1);
+        assertEquals(0, BigDecimal.valueOf(10000).compareTo(response1.getAccountInfo().getAccountBalance()));
     }
 
 }
