@@ -1,9 +1,6 @@
 package com.big_joe.ojemba_bank.service;
 
-import com.big_joe.ojemba_bank.dto.BankResponse;
-import com.big_joe.ojemba_bank.dto.CreditDebitRequest;
-import com.big_joe.ojemba_bank.dto.EnquiryRequest;
-import com.big_joe.ojemba_bank.dto.UserRegRequest;
+import com.big_joe.ojemba_bank.dto.*;
 
 public interface UserService {
     void deleteAll();
@@ -19,4 +16,6 @@ public interface UserService {
     BankResponse creditAccount(CreditDebitRequest request);
 
     BankResponse debitAccount(CreditDebitRequest request);
+
+    BankResponse fundsTransfer(TransferRequest transferRequest);
 }
