@@ -154,4 +154,39 @@ public class UserServiceTest {
         assertEquals(0, BigDecimal.valueOf(10000).compareTo(response1.getAccountInfo().getAccountBalance()));
     }
 
+    @Test
+    public void testForDebitTransaction() {
+        UserRegRequest regRequest = getUserRegRequest(
+                "Joel", "Chimaobi", "Chukwu",
+                "Enugu", "Lagos", "joel@gmail.com",
+                "Male", "07033099619", "07033099619"
+        );
+
+        BankResponse response = userService.createAccount(regRequest);
+
+        assertEquals("Account created successfully", response.getResponseMessage());
+        assertThat(userService.count(), is(1L));
+
+        CreditDebitRequest creditRequest = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(10000))
+                .build();
+
+        BankResponse creditResponse = userService.creditAccount(creditRequest);
+
+        assertNotNull(creditResponse);
+        assertEquals(0, BigDecimal.valueOf(10000).compareTo(creditResponse.getAccountInfo().getAccountBalance()));
+
+        CreditDebitRequest debitRequest = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(4000))
+                .build();
+
+        BankResponse debitResponse = userService.debitAccount(debitRequest);
+
+
+        assertNotNull(debitResponse);
+        assertEquals(0, BigDecimal.valueOf(6000).compareTo(debitResponse.getAccountInfo().getAccountBalance()));
+    }
+
 }
