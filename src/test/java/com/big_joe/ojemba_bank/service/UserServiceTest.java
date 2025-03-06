@@ -189,4 +189,67 @@ public class UserServiceTest {
         assertEquals(0, BigDecimal.valueOf(6000).compareTo(debitResponse.getAccountInfo().getAccountBalance()));
     }
 
+    @Test
+    public void testForZeroCreditTransaction() {
+        UserRegRequest regRequest = getUserRegRequest(
+                "Joel", "Chimaobi", "Chukwu",
+                "Enugu", "Lagos", "joel@gmail.com",
+                "Male", "07033099619", "07033099619"
+        );
+
+        BankResponse response = userService.createAccount(regRequest);
+
+        assertEquals("Account created successfully", response.getResponseMessage());
+        assertThat(userService.count(), is(1L));
+
+        CreditDebitRequest request = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(0))
+                .build();
+
+        BankResponse response1 = userService.creditAccount(request);
+
+        String invalidMsg  = "The amount you entered is invalid. Please enter a valid amount";
+
+        assertNotNull(response1);
+        assertEquals(invalidMsg, response1.getResponseMessage());
+    }
+
+    @Test
+    public void testForOverWithdrawalInDebitTransaction() {
+        UserRegRequest regRequest = getUserRegRequest(
+                "Joel", "Chimaobi", "Chukwu",
+                "Enugu", "Lagos", "joel@gmail.com",
+                "Male", "07033099619", "07033099619"
+        );
+
+        BankResponse response = userService.createAccount(regRequest);
+
+        assertEquals("Account created successfully", response.getResponseMessage());
+        assertThat(userService.count(), is(1L));
+
+        CreditDebitRequest creditRequest = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(10000))
+                .build();
+
+        BankResponse creditResponse = userService.creditAccount(creditRequest);
+
+        assertNotNull(creditResponse);
+        assertEquals(0, BigDecimal.valueOf(10000).compareTo(creditResponse.getAccountInfo().getAccountBalance()));
+
+        CreditDebitRequest debitRequest = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(40000))
+                .build();
+
+        BankResponse debitResponse = userService.debitAccount(debitRequest);
+
+
+        assertNotNull(debitResponse);
+        String insufficientBalance = "Your Account Balance Is Insufficient For the transaction you want to carryout";
+
+        assertEquals(insufficientBalance, debitResponse.getResponseMessage());
+    }
+
 }
