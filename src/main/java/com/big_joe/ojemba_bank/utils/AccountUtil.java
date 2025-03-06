@@ -13,7 +13,13 @@ public class AccountUtil {
     public static final String ACCOUNT_FOUND_CODE = "004";
     public static final String ACCOUNT_FOUND_MESSAGE = "Account Found!";
     public static final String ACCOUNT_CREDIT_SUCCESS_CODE = "005";
-    public static final String ACCOUNT_CREDIT_SUCCESS_MESSAGE = "Your Account Has Been Successfully Credited";
+    public static final String ACCOUNT_CREDIT_SUCCESS_MESSAGE = "Credit Transaction Successful";
+    public static final String INSUFFICIENT_BALANCE_CODE = "006";
+    public static final String INSUFFICIENT_BALANCE_MESSAGE = "Your Account Balance Is Insufficient For the transaction you to carryout";
+    public static final String ACCOUNT_DEBIT_SUCCESS_CODE = "007";
+    public static final String ACCOUNT_DEBIT_SUCCESS_MESSAGE = "Debit Transaction Successful";
+    public static final String INVALID_AMOUNT_CODE = "007";
+    public static final String INVALID_AMOUNT_MESSAGE = "The amount you entered is invalid. Please enter a valid amount";
 
     public static String generateAccountNumber() {
         int min = 100000;
