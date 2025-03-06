@@ -166,13 +166,11 @@ public class UserServiceImpl implements UserService {
 
         User userToBeDebited = foundUser.get();
 
-        if (request.getAmount().compareTo(userToBeDebited.getAccountBalance()) > 0) {
-            return BankResponse.builder()
-                    .responseCode(AccountUtil.INSUFFICIENT_BALANCE_CODE)
-                    .responseMessage(AccountUtil.INSUFFICIENT_BALANCE_MESSAGE)
-                    .accountInfo(null)
-                    .build();
-        }
+        if (validateAmount(request, userToBeDebited)) return BankResponse.builder()
+                .responseCode(AccountUtil.INSUFFICIENT_BALANCE_CODE)
+                .responseMessage(AccountUtil.INSUFFICIENT_BALANCE_MESSAGE)
+                .accountInfo(null)
+                .build();
 
         userToBeDebited.setAccountBalance(userToBeDebited.getAccountBalance().subtract(request.getAmount()));
         userRepository.save(userToBeDebited);
@@ -184,6 +182,54 @@ public class UserServiceImpl implements UserService {
                         .accountName(userToBeDebited.getFirstName() + " " + userToBeDebited.getOtherName() + " " + userToBeDebited.getLastName())
                         .accountNumber(userToBeDebited.getAccountNumber())
                         .accountBalance(userToBeDebited.getAccountBalance())
+                        .build())
+                .build();
+    }
+
+    private static boolean validateAmount(CreditDebitRequest request, User userToBeDebited) {
+        return request.getAmount().compareTo(userToBeDebited.getAccountBalance()) > 0;
+    }
+
+    @Override
+    public BankResponse fundsTransfer(TransferRequest transferRequest) {
+        Optional<User> sender = userRepository.findByAccountNumber(transferRequest.getSourceAccount());
+        Optional<User> receiver = userRepository.findByAccountNumber(transferRequest.getDestinationAccount());
+
+        if (sender.isEmpty() || receiver.isEmpty()) {
+            return BankResponse.builder()
+                    .responseCode(AccountUtil.ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtil.ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        User sourceAccount = sender.get();
+        User recipientAccount = receiver.get();
+
+        if (sourceAccount.getAccountBalance().compareTo(transferRequest.getTransferAmount()) < 0) {
+            return BankResponse.builder()
+                    .responseCode(AccountUtil.INSUFFICIENT_BALANCE_CODE)
+                    .responseMessage(AccountUtil.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        sourceAccount.setAccountBalance(sourceAccount.getAccountBalance().subtract(transferRequest.getTransferAmount()));
+        userRepository.save(sourceAccount);
+
+        recipientAccount.setAccountBalance(recipientAccount.getAccountBalance().add(transferRequest.getTransferAmount()));
+        userRepository.save(recipientAccount);
+
+        User updatedSender = userRepository.findByAccountNumber(sourceAccount.getAccountNumber()).get();
+
+
+        return BankResponse.builder()
+                .responseCode(AccountUtil.TRANSFER_SUCCESS_CODE)
+                .responseMessage(AccountUtil.TRANSFER_SUCCESS_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountName(updatedSender.getFirstName() + " " + sourceAccount.getOtherName() + " " + sourceAccount.getLastName())
+                        .accountNumber(updatedSender.getAccountNumber())
+                        .accountBalance(updatedSender.getAccountBalance())
                         .build())
                 .build();
     }

@@ -20,6 +20,8 @@ public class AccountUtil {
     public static final String ACCOUNT_DEBIT_SUCCESS_MESSAGE = "Debit Transaction Successful";
     public static final String INVALID_AMOUNT_CODE = "007";
     public static final String INVALID_AMOUNT_MESSAGE = "The amount you entered is invalid. Please enter a valid amount";
+    public static final String TRANSFER_SUCCESS_CODE = "008";
+    public static final String TRANSFER_SUCCESS_MESSAGE = "Your transaction was successful";
 
     public static String generateAccountNumber() {
         int min = 100000;

@@ -1,11 +1,6 @@
 package com.big_joe.ojemba_bank.service;
 
-import com.big_joe.ojemba_bank.dto.BankResponse;
-import com.big_joe.ojemba_bank.dto.CreditDebitRequest;
-import com.big_joe.ojemba_bank.dto.EnquiryRequest;
-import com.big_joe.ojemba_bank.dto.UserRegRequest;
-import com.big_joe.ojemba_bank.exceptions.UniqueUserException;
-import com.big_joe.ojemba_bank.utils.AccountUtil;
+import com.big_joe.ojemba_bank.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,6 +245,49 @@ public class UserServiceTest {
         String insufficientBalance = "Your Account Balance Is Insufficient For the transaction you want to carryout";
 
         assertEquals(insufficientBalance, debitResponse.getResponseMessage());
+    }
+
+    @Test
+    public void testForTransferTransaction() {
+        UserRegRequest regRequest = getUserRegRequest(
+                "Joel", "Chimaobi", "Chukwu",
+                "Enugu", "Lagos", "joel@gmail.com",
+                "Male", "07033099619", "07033099619"
+        );
+
+        BankResponse response = userService.createAccount(regRequest);
+        assertEquals("Account created successfully", response.getResponseMessage());
+
+        UserRegRequest regRequest2 = getUserRegRequest(
+                "Nnamdi", "Solomon", "Chukwu",
+                "Enugu", "Lagos", "nd.solo@gmail.com",
+                "Male", "08032301425", "08032301425"
+        );
+
+        BankResponse response2 = userService.createAccount(regRequest2);
+        assertEquals("Account created successfully", response2.getResponseMessage());
+        assertThat(userService.count(), is(2L));
+
+        CreditDebitRequest creditRequest = CreditDebitRequest.builder()
+                .accountNumber(response.getAccountInfo().getAccountNumber())
+                .amount(BigDecimal.valueOf(10000))
+                .build();
+
+        BankResponse creditResponse = userService.creditAccount(creditRequest);
+
+        assertNotNull(creditResponse);
+        assertEquals(0, BigDecimal.valueOf(10000).compareTo(creditResponse.getAccountInfo().getAccountBalance()));
+
+        TransferRequest transferRequest = TransferRequest.builder()
+                .sourceAccount(response.getAccountInfo().getAccountNumber())
+                .destinationAccount(response2.getAccountInfo().getAccountNumber())
+                .transferAmount(BigDecimal.valueOf(5000))
+                .build();
+
+        BankResponse transferResponse = userService.fundsTransfer(transferRequest);
+        assertNotNull(transferResponse);
+
+        assertEquals(0, BigDecimal.valueOf(5000).compareTo(transferResponse.getAccountInfo().getAccountBalance()));
     }
 
 }
