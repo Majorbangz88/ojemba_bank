@@ -20,8 +20,11 @@ public class Transactions {
     private String transactionId;
     private String transactionType;
     private BigDecimal transactionAmt;
-    private String accountNumber;
-    private String accountName;
+    private String senderAccountNumber;
+    private String senderAccountName;
+    private String recipientAccountNumber;
+    private String recipientAccountName;
+    private String description;
     private String status;
     private String transactionReference;
     @CreationTimestamp
