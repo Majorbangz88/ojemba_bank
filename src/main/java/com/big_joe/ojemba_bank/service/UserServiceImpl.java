@@ -236,6 +236,20 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
+        User updatedSender = getUser(transferRequest, sourceAccount, recipientAccount);
+
+        return BankResponse.builder()
+                .responseCode(AccountUtil.TRANSFER_SUCCESS_CODE)
+                .responseMessage(AccountUtil.TRANSFER_SUCCESS_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountName(updatedSender.getFirstName() + " " + sourceAccount.getOtherName() + " " + sourceAccount.getLastName())
+                        .accountNumber(updatedSender.getAccountNumber())
+                        .accountBalance(updatedSender.getAccountBalance())
+                        .build())
+                .build();
+    }
+
+    private User getUser(TransferRequest transferRequest, User sourceAccount, User recipientAccount) {
         sourceAccount.setAccountBalance(sourceAccount.getAccountBalance().subtract(transferRequest.getTransferAmount()));
         userRepository.save(sourceAccount);
 
@@ -257,15 +271,6 @@ public class UserServiceImpl implements UserService {
                 .description(transferRequest.getDescription())
                 .build();
         transactionService.saveTransaction(transactionDto);
-
-        return BankResponse.builder()
-                .responseCode(AccountUtil.TRANSFER_SUCCESS_CODE)
-                .responseMessage(AccountUtil.TRANSFER_SUCCESS_MESSAGE)
-                .accountInfo(AccountInfo.builder()
-                        .accountName(updatedSender.getFirstName() + " " + sourceAccount.getOtherName() + " " + sourceAccount.getLastName())
-                        .accountNumber(updatedSender.getAccountNumber())
-                        .accountBalance(updatedSender.getAccountBalance())
-                        .build())
-                .build();
+        return updatedSender;
     }
 }
