@@ -20,6 +20,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    TransactionService transactionService;
+
     @Override
     public void deleteAll() {
         userRepository.deleteAll();
@@ -53,21 +56,21 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(newUser);
 
-        EmailDetails emailDetails = EmailDetails.builder()
-                .recipient(savedUser.getEmail())
-                .subject("Welcome To Ojemba Bank Plc.")
-                .messageBody("Hello " + savedUser.getFirstName() + " " + savedUser.getOtherName() + " " + savedUser.getLastName() + ",\n" +
-                        "We want to specially thank you for choosing Ojemba. Indeed, we stand true to our name as we promise you a jolly ride. \n" +
-                        "Kindly find your account details below: \n" +
-                        "Account Number: " + savedUser.getAccountNumber() + ",\n" +
-                        "Account Balance: NGN" + savedUser.getAccountBalance() + ".00\n" +
-                        "PLEASE FEEL FREE TO REACH OUT TO US FOR ANY ENQUIRIES THROUGH ANY OF OUR CHANNELS.\n" +
-                        "\n Kind regards,\n" +
-                        "Chukwu Joel Chimaobi\n" +
-                        "Head, Customer Success Dept!")
-                .build();
-
-        emailService.sendEmailAlert(emailDetails);
+//        EmailDetails emailDetails = EmailDetails.builder()
+//                .recipient(savedUser.getEmail())
+//                .subject("Welcome To Ojemba Bank Plc.")
+//                .messageBody("Hello " + savedUser.getFirstName() + " " + savedUser.getOtherName() + " " + savedUser.getLastName() + ",\n" +
+//                        "We want to specially thank you for choosing Ojemba. Indeed, we stand true to our name as we promise you a jolly ride. \n" +
+//                        "Kindly find your account details below: \n" +
+//                        "Account Number: " + savedUser.getAccountNumber() + ",\n" +
+//                        "Account Balance: NGN" + savedUser.getAccountBalance() + ".00\n" +
+//                        "PLEASE FEEL FREE TO REACH OUT TO US FOR ANY ENQUIRIES THROUGH ANY OF OUR CHANNELS.\n" +
+//                        "\n Kind regards,\n" +
+//                        "Chukwu Joel Chimaobi\n" +
+//                        "Head, Customer Success Dept!")
+//                .build();
+//
+//        emailService.sendEmailAlert(emailDetails);
 
         return BankResponse.builder()
                 .responseCode(AccountUtil.ACCOUNT_CREATION_CODE)
@@ -139,7 +142,8 @@ public class UserServiceImpl implements UserService {
         }
 
         userToBeCredited.setAccountBalance(userToBeCredited.getAccountBalance().add(request.getAmount()));
-        userRepository.save(userToBeCredited);
+
+        saveUser(request, userToBeCredited, "CR");
 
         return BankResponse.builder()
                 .responseCode(AccountUtil.ACCOUNT_CREDIT_SUCCESS_CODE)
@@ -173,7 +177,8 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userToBeDebited.setAccountBalance(userToBeDebited.getAccountBalance().subtract(request.getAmount()));
-        userRepository.save(userToBeDebited);
+
+        saveUser(request, userToBeDebited, "DR");
 
         return BankResponse.builder()
                 .responseCode(AccountUtil.ACCOUNT_DEBIT_SUCCESS_CODE)
@@ -184,6 +189,23 @@ public class UserServiceImpl implements UserService {
                         .accountBalance(userToBeDebited.getAccountBalance())
                         .build())
                 .build();
+    }
+
+    private void saveUser(CreditDebitRequest request, User userToBeDebited, String transactionType) {
+        userRepository.save(userToBeDebited);
+
+        String debitCustomerName = userToBeDebited.getFirstName() + " " + userToBeDebited.getOtherName() + " " + userToBeDebited.getLastName();
+
+        TransactionDto transactionDto = TransactionDto.builder()
+                .transactionType(transactionType)
+                .senderAccountName(debitCustomerName)
+                .senderAccountNumber(userToBeDebited.getAccountNumber())
+                .recipientAccountName(null)
+                .recipientAccountNumber(null)
+                .transactionAmt(request.getAmount())
+                .description(null)
+                .build();
+        transactionService.saveTransaction(transactionDto);
     }
 
     private static boolean validateAmount(CreditDebitRequest request, User userToBeDebited) {
@@ -222,6 +244,19 @@ public class UserServiceImpl implements UserService {
 
         User updatedSender = userRepository.findByAccountNumber(sourceAccount.getAccountNumber()).get();
 
+        String senderName = sourceAccount.getFirstName() + " " + sourceAccount.getOtherName() + " " + sourceAccount.getLastName();
+        String recipientName = recipientAccount.getFirstName() + " " + recipientAccount.getOtherName() + " " + recipientAccount.getLastName();
+
+        TransactionDto transactionDto = TransactionDto.builder()
+                .transactionType("TFR")
+                .senderAccountName(senderName)
+                .senderAccountNumber(sourceAccount.getAccountNumber())
+                .recipientAccountName(recipientName)
+                .recipientAccountNumber(recipientAccount.getAccountNumber())
+                .transactionAmt(transferRequest.getTransferAmount())
+                .description(transferRequest.getDescription())
+                .build();
+        transactionService.saveTransaction(transactionDto);
 
         return BankResponse.builder()
                 .responseCode(AccountUtil.TRANSFER_SUCCESS_CODE)

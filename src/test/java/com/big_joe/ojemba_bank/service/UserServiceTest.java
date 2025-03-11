@@ -282,6 +282,7 @@ public class UserServiceTest {
                 .sourceAccount(response.getAccountInfo().getAccountNumber())
                 .destinationAccount(response2.getAccountInfo().getAccountNumber())
                 .transferAmount(BigDecimal.valueOf(5000))
+                .description("Payment for food")
                 .build();
 
         BankResponse transferResponse = userService.fundsTransfer(transferRequest);
