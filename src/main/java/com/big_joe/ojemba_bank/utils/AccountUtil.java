@@ -22,6 +22,10 @@ public class AccountUtil {
     public static final String INVALID_AMOUNT_MESSAGE = "The amount you entered is invalid. Please enter a valid amount";
     public static final String TRANSFER_SUCCESS_CODE = "008";
     public static final String TRANSFER_SUCCESS_MESSAGE = "Your transaction was successful";
+    public static final String TRANSACTION_NOT_EXIST_CODE = "009";
+    public static final String TRANSACTION_NOT_EXIST_MESSAGE = "This transaction was not found";
+    public static final String TRANSACTION_EXIST_CODE = "010";
+    public static final String TRANSACTION_EXIST_MESSAGE = "Transaction found!";
 
     public static String generateAccountNumber() {
         int min = 100000;

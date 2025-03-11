@@ -1,16 +1,13 @@
 package com.big_joe.ojemba_bank.service;
 
-import com.big_joe.ojemba_bank.dto.BankResponse;
-import com.big_joe.ojemba_bank.dto.CreditDebitRequest;
-import com.big_joe.ojemba_bank.dto.TransactionDto;
-import com.big_joe.ojemba_bank.dto.TransferRequest;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeEach;
+import com.big_joe.ojemba_bank.data.model.Transactions;
+import com.big_joe.ojemba_bank.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,7 +20,7 @@ public class TransactionServiceTest {
 
 //    @BeforeEach
 //    public void setup() {
-//        transactionService.deleteAll
+//        transactionService.deleteAll();
 //    }
 
     @Autowired
@@ -63,5 +60,32 @@ public class TransactionServiceTest {
                 .build();
 
         transactionService.saveTransaction(creditTransaction);
+    }
+
+    @Test
+    public void testFindTransactionByTransactionReferenceOrAccountNumber() {
+        TransactionEnquiryReq enquiryReq = TransactionEnquiryReq.builder()
+                .transactionReference("z3U10VJduYRy")
+                .build();
+
+        TransactionResponse transaction = transactionService.findTransactionByReference(enquiryReq);
+
+        assertNotNull(transaction);
+        assertEquals("Transaction found!", transaction.getResponseMessage());
+
+        TransactionEnquiryReq enquiryReq1 = TransactionEnquiryReq.builder()
+                .accountNumber("2025506057")
+                .build();
+
+        List<Transactions> transactions = transactionService.findTransactionsByAccountNumber(enquiryReq1);
+        int numberOfTransactions = transactions.size();
+
+        assertEquals(2, numberOfTransactions);
+    }
+
+    @Test
+    public void testReturnAllTransactions() {
+        List<Transactions> allTransactions = transactionService.allTransactions();
+        assertEquals(5, allTransactions.size());
     }
 }

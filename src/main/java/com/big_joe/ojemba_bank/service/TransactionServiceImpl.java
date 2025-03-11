@@ -2,11 +2,18 @@ package com.big_joe.ojemba_bank.service;
 
 import com.big_joe.ojemba_bank.data.model.Transactions;
 import com.big_joe.ojemba_bank.data.repository.TransactionRepository;
+import com.big_joe.ojemba_bank.dto.BankResponse;
 import com.big_joe.ojemba_bank.dto.TransactionDto;
+import com.big_joe.ojemba_bank.dto.TransactionEnquiryReq;
+import com.big_joe.ojemba_bank.dto.TransactionResponse;
+import com.big_joe.ojemba_bank.exceptions.TransactionsNotFoundException;
+import com.big_joe.ojemba_bank.utils.AccountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -47,5 +54,49 @@ public class TransactionServiceImpl implements TransactionService {
             token.append(characters.charAt(random.nextInt(characters.length())));
         }
         return token.toString();
+    }
+
+    @Override
+    public TransactionResponse findTransactionByReference(TransactionEnquiryReq enquiryReq) {
+        Optional<Transactions> transaction = transactionRepository.findByTransactionReference(enquiryReq.getTransactionReference());
+
+        if (transaction.isEmpty()) {
+            return TransactionResponse.builder()
+                    .responseCode(AccountUtil.TRANSACTION_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtil.TRANSACTION_NOT_EXIST_MESSAGE)
+                    .transaction(null)
+                    .build();
+        }
+
+        Transactions foundTransaction = transaction.get();
+
+        return TransactionResponse.builder()
+                .responseCode(AccountUtil.TRANSACTION_EXIST_CODE)
+                .responseMessage(AccountUtil.TRANSACTION_EXIST_MESSAGE)
+                .transaction(Transactions.builder()
+                        .transactionType(foundTransaction.getTransactionType())
+                        .senderAccountName(foundTransaction.getSenderAccountName())
+                        .senderAccountNumber(foundTransaction.getSenderAccountNumber())
+                        .recipientAccountName(foundTransaction.getRecipientAccountName())
+                        .recipientAccountNumber(foundTransaction.getRecipientAccountNumber())
+                        .transactionAmt(foundTransaction.getTransactionAmt())
+                        .description(foundTransaction.getDescription())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public List<Transactions> findTransactionsByAccountNumber(TransactionEnquiryReq enquiryReq1) {
+        List<Transactions> transaction = transactionRepository.findBySenderAccountNumber(enquiryReq1.getAccountNumber());
+
+        if (transaction.isEmpty()) {
+            throw new TransactionsNotFoundException("User with this Account number does not exist, hence tansactions not found!");
+        }
+        return transaction;
+    }
+
+    @Override
+    public List<Transactions> allTransactions() {
+        return transactionRepository.findAll();
     }
 }
