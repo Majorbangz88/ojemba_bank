@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class TransactionEnquiryReq {
     private String transactionReference;
     private String accountNumber;
+    private String startDate;
+    private String endDate;
 }

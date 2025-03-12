@@ -2,15 +2,16 @@ package com.big_joe.ojemba_bank.service;
 
 import com.big_joe.ojemba_bank.data.model.Transactions;
 import com.big_joe.ojemba_bank.dto.*;
+import com.itextpdf.text.DocumentException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class TransactionServiceTest {
@@ -87,5 +88,20 @@ public class TransactionServiceTest {
     public void testReturnAllTransactions() {
         List<Transactions> allTransactions = transactionService.allTransactions();
         assertEquals(5, allTransactions.size());
+    }
+
+    @Test
+    public void generateAccountStatement() throws DocumentException, FileNotFoundException {
+        TransactionEnquiryReq req = TransactionEnquiryReq.builder()
+                .accountNumber("2025841506")
+                .startDate("01/03/2025")
+                .endDate("11/03/2025")
+                .build();
+
+        List<Transactions> transactions = transactionService.generateAccountStatement(req);
+
+        assertNotNull(transactions);
+        assertFalse(transactions.isEmpty(), "No transactions found for the given period");
+        System.out.println("Transactions count: " + transactions.size());
     }
 }
