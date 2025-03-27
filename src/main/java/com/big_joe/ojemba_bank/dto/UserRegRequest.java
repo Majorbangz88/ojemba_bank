@@ -19,6 +19,7 @@ public class UserRegRequest {
     private String stateOfOrigin;
     private BigDecimal accountBalance;
     private String email;
+    private String password;
     private String phoneNumber;
     private String alternativePhoneNumber;
 }
