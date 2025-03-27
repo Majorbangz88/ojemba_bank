@@ -7,6 +7,7 @@ import com.big_joe.ojemba_bank.dto.TransactionResponse;
 import com.itextpdf.text.DocumentException;
 
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.List;
 
 public interface TransactionService {
@@ -18,5 +19,5 @@ public interface TransactionService {
 
     List<Transactions> allTransactions();
 
-    List<Transactions> generateAccountStatement(TransactionEnquiryReq req) throws DocumentException, FileNotFoundException;
+    List<Transactions> findAll();
 }

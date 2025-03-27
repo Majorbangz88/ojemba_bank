@@ -39,6 +39,8 @@ public class  User {
     private BigDecimal accountBalance;
     @Schema(name = "User email")
     private String email;
+    @Schema(name = "User password")
+    private String password;
     @Schema(name = "User phone number")
     private String phoneNumber;
     @Schema(name = "User alternative phone number")
