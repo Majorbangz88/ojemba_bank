@@ -12,6 +12,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -35,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     TransactionService transactionService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private static final String FILE = "C:\\Users\\User\\Documents\\MyAccountStatement.pdf";
 
@@ -65,6 +69,7 @@ public class UserServiceImpl implements UserService {
                 .accountNumber(AccountUtil.generateAccountNumber())
                 .accountBalance(BigDecimal.ZERO)
                 .email(regRequest.getEmail())
+                .password(passwordEncoder.encode(regRequest.getPassword()))
                 .phoneNumber(regRequest.getPhoneNumber())
                 .alternativePhoneNumber(regRequest.getPhoneNumber())
                 .build();
