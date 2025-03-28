@@ -98,7 +98,7 @@ public class TransactionServiceTest {
                 .endDate("11/03/2025")
                 .build();
 
-        List<Transactions> transactions = transactionService.generateAccountStatement(req);
+        List<Transactions> transactions = userService.generateAccountStatement(req);
 
         assertNotNull(transactions);
         assertFalse(transactions.isEmpty(), "No transactions found for the given period");

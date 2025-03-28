@@ -28,7 +28,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -39,8 +40,8 @@ public class UserServiceTest {
 
     private static UserRegRequest getUserRegRequest(String firstname, String otherName,
                                                     String lastname, String stateOfOrigin,
-                                                    String address, String email, String gender,
-                                                    String phone, String altPhone) {
+                                                    String address, String email, String password,
+                                                    String gender, String phone, String altPhone) {
         UserRegRequest regRequest = new UserRegRequest();
         regRequest.setFirstName(firstname);
         regRequest.setOtherName(otherName);
@@ -48,6 +49,7 @@ public class UserServiceTest {
         regRequest.setStateOfOrigin(stateOfOrigin);
         regRequest.setAddress(address);
         regRequest.setEmail(email);
+        regRequest.setPassword(password);
         regRequest.setGender(gender);
         regRequest.setPhoneNumber(phone);
         regRequest.setAlternativePhoneNumber(altPhone);
@@ -58,8 +60,9 @@ public class UserServiceTest {
     public void testForUniqueRegistration() {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
-                "Enugu", "Lagos", "joellegend8@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "Enugu", "Lagos", "joel@gmail.com",
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -69,8 +72,9 @@ public class UserServiceTest {
 
         UserRegRequest regRequest2 = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
-                "Enugu", "Lagos", "joellegend8@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "Enugu", "Lagos", "joel@gmail.com",
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response1 = userService.createAccount(regRequest2);
@@ -85,7 +89,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -108,7 +113,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -130,7 +136,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -154,7 +161,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -189,7 +197,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -215,7 +224,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -252,7 +262,8 @@ public class UserServiceTest {
         UserRegRequest regRequest = getUserRegRequest(
                 "Joel", "Chimaobi", "Chukwu",
                 "Enugu", "Lagos", "joel@gmail.com",
-                "Male", "07033099619", "07033099619"
+                "qwert", "Male", "07033099619",
+                "07033099619"
         );
 
         BankResponse response = userService.createAccount(regRequest);
@@ -261,7 +272,8 @@ public class UserServiceTest {
         UserRegRequest regRequest2 = getUserRegRequest(
                 "Nnamdi", "Solomon", "Chukwu",
                 "Enugu", "Lagos", "nd.solo@gmail.com",
-                "Male", "08032301425", "08032301425"
+                "asdfghj", "Male", "08032301425",
+                "08032301425"
         );
 
         BankResponse response2 = userService.createAccount(regRequest2);
