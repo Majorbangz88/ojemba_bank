@@ -14,6 +14,8 @@ public interface UserService {
 
     BankResponse createAccount(UserRegRequest regRequest);
 
+    BankResponse login(LoginDto loginDto);
+
     Long count();
 
     BankResponse balanceEnquiry(EnquiryRequest enquiryRequest);
@@ -27,5 +29,6 @@ public interface UserService {
     BankResponse fundsTransfer(TransferRequest transferRequest);
 
     Optional<User> findByAccountNumber(String senderAccountNumber);
+
     List<Transactions> generateAccountStatement(TransactionEnquiryReq req) throws DocumentException, FileNotFoundException;
 }

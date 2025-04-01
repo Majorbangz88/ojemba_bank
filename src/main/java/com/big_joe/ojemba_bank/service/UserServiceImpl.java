@@ -1,5 +1,6 @@
 package com.big_joe.ojemba_bank.service;
 
+import com.big_joe.ojemba_bank.config.JwtTokenProvider;
 import com.big_joe.ojemba_bank.data.model.AccountInfo;
 import com.big_joe.ojemba_bank.data.model.Transactions;
 import com.big_joe.ojemba_bank.data.model.User;
@@ -12,6 +13,9 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +44,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     private static final String FILE = "C:\\Users\\User\\Documents\\MyAccountStatement.pdf";
 
@@ -100,6 +111,28 @@ public class UserServiceImpl implements UserService {
                         .accountNumber(savedUser.getAccountNumber())
                         .accountBalance(savedUser.getAccountBalance())
                         .build())
+                .build();
+    }
+
+    @Override
+    public BankResponse login(LoginDto loginDto) {
+        Authentication authentication = null;
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
+        );
+
+        EmailDetails loginAlert = EmailDetails.builder()
+                .subject("Successful Login")
+                .recipient(loginDto.getEmail())
+                .messageBody("You have successfully logged into your account at " + LocalDateTime.now() + " " +
+                        "Please contact customer care if you did not initiate this request immediately.")
+                .build();
+
+        emailService.sendEmailAlert(loginAlert);
+
+        return BankResponse.builder()
+                .responseCode("Login code")
+                .responseMessage(jwtTokenProvider.generateToken(authentication))
                 .build();
     }
 
