@@ -33,6 +33,19 @@ public class UserController {
     }
 
     @Operation(
+            summary = "User login",
+            description = "Allow existing user to login"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "HTTP Status 201 Created"
+    )
+    @PostMapping(path = "/login")
+    public BankResponse login(@RequestBody LoginDto loginDto) {
+        return userService.login(loginDto);
+    }
+
+    @Operation(
             summary = "Balance Enquiry",
             description = "Check Customer's Account Balance"
     )
@@ -40,7 +53,7 @@ public class UserController {
             responseCode = "200",
             description = "HTTP Status 200 Ok"
     )
-    @GetMapping(path = "/enquiry")
+    @GetMapping(path = "/enquiry/balance")
     public BankResponse balanceEnquiry(@RequestBody EnquiryRequest enquiryRequest) {
         return userService.balanceEnquiry(enquiryRequest);
     }
@@ -53,7 +66,7 @@ public class UserController {
             responseCode = "200",
             description = "HTTP Status 200 Ok"
     )
-    @GetMapping(path = "/enquiry")
+    @GetMapping(path = "/enquiry/name")
     public String nameEnquiry(@RequestBody EnquiryRequest enquiryRequest) {
         return userService.nameEnquiry(enquiryRequest);
     }
